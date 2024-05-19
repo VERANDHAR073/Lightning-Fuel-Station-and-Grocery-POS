@@ -8,6 +8,8 @@ import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import javax.swing.JFrame;
 import com.model.MySql;
+import com.model.UserDetails;
+
 
 public class Login extends javax.swing.JFrame {
     
@@ -150,7 +152,11 @@ public class Login extends javax.swing.JFrame {
                 if(resultSet.next()){
                     String name = resultSet.getString("name");
                     
-                    Main main = new Main(username,name);
+                    UserDetails user = new UserDetails();
+                    user.setName(name);
+                    user.setUsername(username);
+                    
+                    Main main = new Main(user);
                     main.setVisible(true);
                     main.setExtendedState(JFrame.MAXIMIZED_BOTH);
                     this.dispose();

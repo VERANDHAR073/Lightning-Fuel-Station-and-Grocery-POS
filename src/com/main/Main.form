@@ -48,7 +48,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="menu2" pref="220" max="32767" attributes="0"/>
-                      <Component id="user2" alignment="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="user" alignment="0" pref="0" max="32767" attributes="0"/>
                       <Component id="roundPanel2" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -66,7 +66,7 @@
                       <Group type="102" attributes="0">
                           <Component id="roundPanel2" min="-2" pref="49" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="user2" min="-2" max="-2" attributes="0"/>
+                          <Component id="user" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="menu2" pref="363" max="32767" attributes="0"/>
                       </Group>
@@ -86,7 +86,10 @@
         </Container>
         <Component class="com.component.Menu" name="menu2">
         </Component>
-        <Component class="com.component.User" name="user2">
+        <Component class="com.component.User" name="user">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="user.setName(&quot;Charuka&quot;);"/>
+          </AuxValues>
         </Component>
         <Container class="com.swing.RoundPanel" name="roundPanel2">
           <Properties>

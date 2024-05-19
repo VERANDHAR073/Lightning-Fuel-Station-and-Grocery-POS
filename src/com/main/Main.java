@@ -7,16 +7,14 @@ import com.form.PumpRelese;
 import com.form.PumperDetails;
 import com.form.Register;
 import com.form.Reports;
+import com.model.UserDetails;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 
 
 public class Main extends javax.swing.JFrame {
     
-    public Main(String username,String name) {
+    public Main(UserDetails userDetails) {
         initComponents();
         setBackground(new Color(0, 0, 0, 0));
         EventMenu event = new EventMenu() {
@@ -42,7 +40,7 @@ public class Main extends javax.swing.JFrame {
         menu2.initMenu(event);
         showForm(new Home());
         roundPanel1.setOpaque(true);
-        
+        user.loadUserDetails(userDetails.getName());
     }
     
     private void showForm(Component com) {
@@ -60,7 +58,7 @@ public class Main extends javax.swing.JFrame {
         roundPanel1 = new com.swing.RoundPanel();
         body = new javax.swing.JPanel();
         menu2 = new com.component.Menu();
-        user2 = new com.component.User();
+        user = new com.component.User();
         roundPanel2 = new com.swing.RoundPanel();
         jLabel1 = new javax.swing.JLabel();
 
@@ -71,6 +69,8 @@ public class Main extends javax.swing.JFrame {
 
         body.setOpaque(false);
         body.setLayout(new java.awt.BorderLayout());
+
+        user.setName("Charuka");
 
         roundPanel2.setBackground(new java.awt.Color(51, 51, 51));
         roundPanel2.setLayout(new java.awt.GridBagLayout());
@@ -89,7 +89,7 @@ public class Main extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(menu2, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                    .addComponent(user2, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(user, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, 948, Short.MAX_VALUE)
@@ -104,7 +104,7 @@ public class Main extends javax.swing.JFrame {
                     .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addComponent(roundPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(user2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(user, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(menu2, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -132,6 +132,6 @@ public class Main extends javax.swing.JFrame {
     private com.component.Menu menu2;
     private com.swing.RoundPanel roundPanel1;
     private com.swing.RoundPanel roundPanel2;
-    private com.component.User user2;
+    private com.component.User user;
     // End of variables declaration//GEN-END:variables
 }

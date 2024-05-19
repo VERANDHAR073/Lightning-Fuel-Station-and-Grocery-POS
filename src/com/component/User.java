@@ -10,11 +10,12 @@ package com.component;
  */
 public class User extends javax.swing.JPanel {
 
-    /**
-     * Creates new form User
-     */
     public User() {
         initComponents();
+    }
+    
+    public void loadUserDetails(String name){
+        jLabel1.setText(name);
     }
 
     /**
