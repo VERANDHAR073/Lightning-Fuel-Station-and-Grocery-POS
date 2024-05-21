@@ -48,7 +48,7 @@ public class Main extends javax.swing.JFrame {
 
         roundPanel1 = new com.swing.RoundPanel();
         body = new javax.swing.JPanel();
-        user = new com.component.User();
+        user = new com.frams.User();
         roundPanel2 = new com.swing.RoundPanel();
         jLabel1 = new javax.swing.JLabel();
         roundPanel3 = new com.swing.RoundPanel();
@@ -275,6 +275,6 @@ public class Main extends javax.swing.JFrame {
     private com.swing.RoundPanel roundPanel1;
     private com.swing.RoundPanel roundPanel2;
     private com.swing.RoundPanel roundPanel3;
-    private com.component.User user;
+    private com.frams.User user;
     // End of variables declaration//GEN-END:variables
 }

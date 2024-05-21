@@ -84,7 +84,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
         </Container>
-        <Component class="com.component.User" name="user">
+        <Component class="com.frams.User" name="user">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="user.setName(&quot;Charuka&quot;);"/>
           </AuxValues>
