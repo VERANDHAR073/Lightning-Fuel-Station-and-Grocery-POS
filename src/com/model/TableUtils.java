@@ -1,4 +1,4 @@
-package com.event;
+package com.model;
 
 import javax.swing.*;
 import java.awt.*;

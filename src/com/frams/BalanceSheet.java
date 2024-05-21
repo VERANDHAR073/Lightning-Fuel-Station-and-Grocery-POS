@@ -1,6 +1,6 @@
 package com.frams;
 
-import com.event.TableUtils;
+import com.model.TableUtils;
 import java.awt.Color;
 import static java.awt.Color.WHITE;
 import java.awt.Dimension;
