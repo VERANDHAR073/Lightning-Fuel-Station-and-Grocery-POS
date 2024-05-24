@@ -1,7 +1,6 @@
 package com.main;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.main.Main;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import javax.swing.JFrame;
@@ -200,9 +199,9 @@ public class AdminLogin extends javax.swing.JFrame {
                     user.setName(name);
                     user.setUsername(username);
                     
-                    Main main = new Main(user);
-                    main.setVisible(true);
-                    main.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    AdminNavigator admin = new AdminNavigator(user);
+                    admin.setVisible(true);
+                    admin.setExtendedState(JFrame.MAXIMIZED_BOTH);
                     this.dispose();
                 }else{
                     JOptionPane.showMessageDialog(this, "Username Or Password Incorrect", "Warning", JOptionPane.ERROR_MESSAGE);
