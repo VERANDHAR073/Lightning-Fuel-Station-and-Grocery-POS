@@ -10,12 +10,13 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import com.model.MySql;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class DailyRelease extends javax.swing.JPanel {
 
-    private static HashMap<String, Integer> dateMap = new HashMap<>();
     private static HashMap<String, Integer> pumpMap = new HashMap<>();
-    private static HashMap<String, Integer> employeeMap = new HashMap<>();
+    private static HashMap<String, String> employeeMap = new HashMap<>();
     
 
     private Double totalSales;
@@ -23,46 +24,9 @@ public class DailyRelease extends javax.swing.JPanel {
     public DailyRelease() {
         initComponents();
         setOpaque(false);
-        addDate();
         loadPumps();
         loaddEmployee();
         loadRealseData();
-    }
-
-    private void addDate() {
-        LocalDate d = LocalDate.now();
-        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String date = d.format(f);
-
-        try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `release_date` WHERE `pr_date` = '" + date + "'");
-            if (!resultSet.next()) {
-                MySql.execute("INSERT INTO `release_date` (`pr_date`) VALUES ('" + date + "')");
-                loadDate();
-            } else {
-                loadDate();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadDate() {
-        try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `release_date` ORDER BY `pr_date` DESC");
-            Vector fv = new Vector();
-            fv.add("SELECT");
-
-            while (resultSet.next()) {
-                fv.add(resultSet.getString("pr_date"));
-                dateMap.put(resultSet.getString("pr_date"), resultSet.getInt("pr_id"));
-            }
-
-            DefaultComboBoxModel cb = new DefaultComboBoxModel(fv);
-            jComboBox1.setModel(cb);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void loadPumps() {
@@ -85,13 +49,13 @@ public class DailyRelease extends javax.swing.JPanel {
 
     private void loaddEmployee() {
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `pumpers`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `employees`");
             Vector fv = new Vector();
             fv.add("SELECT");
 
             while (resultSet.next()) {
-                fv.add(resultSet.getString("per_name"));
-                employeeMap.put(resultSet.getString("per_name"), resultSet.getInt("per_id"));
+                fv.add(resultSet.getString("e_fname")+ " "+ resultSet.getString("e_lname"));
+                employeeMap.put(resultSet.getString("e_fname")+ " "+ resultSet.getString("e_lname"), resultSet.getString("e_nic"));
             }
 
             DefaultComboBoxModel cb = new DefaultComboBoxModel(fv);
@@ -104,22 +68,21 @@ public class DailyRelease extends javax.swing.JPanel {
 
     private void loadRealseData() {
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `pumps_has_release_date` "
-                    + "INNER JOIN `pumpers` ON `pumps_has_release_date`.`pumps_pu_id` = `pumpers`.`per_id` "
-                    + "INNER JOIN `release_date` ON `pumps_has_release_date`.`release_date_pr_id` = `release_date`.`pr_id` "
-                    + "INNER JOIN `pumps` ON `pumps_has_release_date`.`pumps_pu_id` = `pumps`.`pu_id`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `release` "
+                    + "INNER JOIN `employees` ON `release`.`e_nic` = `employees`.`e_nic` "
+                    + "INNER JOIN `pumps` ON `release`.`pu_id` = `pumps`.`pu_id`");
 
             DefaultTableModel tmodel = (DefaultTableModel) jTable2.getModel();
             tmodel.setRowCount(0);
 
             while (resultSet.next()) {
                 Vector<String> fv = new Vector<>();
-                fv.add(resultSet.getString("id"));
-                fv.add(resultSet.getString("per_name"));
+                fv.add(resultSet.getString("r_id"));
+                fv.add(resultSet.getString("e_fname")+ " "+ resultSet.getString("e_lname"));
                 fv.add(resultSet.getString("pu_name"));
-                fv.add(resultSet.getString("pr_date"));
-                fv.add(resultSet.getString("pr_qty"));
-                fv.add(resultSet.getString("sales_total"));
+                fv.add(resultSet.getString("r_date"));
+                fv.add(resultSet.getString("r_qty"));
+                fv.add(resultSet.getString("r_total"));
 
                 tmodel.addRow(fv);
                 jTable2.setModel(tmodel);
@@ -130,7 +93,7 @@ public class DailyRelease extends javax.swing.JPanel {
     }
 
     private void clearRelease() {
-        jComboBox1.setSelectedIndex(0);
+        jDateChooser1.setDate(null);
         jComboBox2.setSelectedIndex(0);
         jComboBox3.setSelectedIndex(0);
         jFormattedTextField1.setText("");
@@ -143,7 +106,6 @@ public class DailyRelease extends javax.swing.JPanel {
 
         roundPanel2 = new com.swing.RoundPanel();
         jLabel5 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
@@ -158,6 +120,7 @@ public class DailyRelease extends javax.swing.JPanel {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
 
         roundPanel2.setBackground(new java.awt.Color(102, 102, 102));
 
@@ -167,17 +130,6 @@ public class DailyRelease extends javax.swing.JPanel {
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel5.setText("Pumps Release");
         jLabel5.setToolTipText("");
-
-        jComboBox1.setBackground(new java.awt.Color(102, 102, 102));
-        jComboBox1.setFont(new java.awt.Font("Quicksand", 0, 12)); // NOI18N
-        jComboBox1.setForeground(new java.awt.Color(255, 255, 255));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.setPreferredSize(new java.awt.Dimension(64, 22));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
-            }
-        });
 
         jLabel7.setBackground(new java.awt.Color(255, 255, 255));
         jLabel7.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
@@ -326,6 +278,10 @@ public class DailyRelease extends javax.swing.JPanel {
             }
         });
 
+        jDateChooser1.setBackground(new java.awt.Color(51, 51, 51));
+        jDateChooser1.setForeground(new java.awt.Color(255, 255, 255));
+        jDateChooser1.setPreferredSize(new java.awt.Dimension(64, 22));
+
         javax.swing.GroupLayout roundPanel2Layout = new javax.swing.GroupLayout(roundPanel2);
         roundPanel2.setLayout(roundPanel2Layout);
         roundPanel2Layout.setHorizontalGroup(
@@ -334,30 +290,33 @@ public class DailyRelease extends javax.swing.JPanel {
                 .addGap(30, 30, 30)
                 .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(roundPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(roundPanel2Layout.createSequentialGroup()
                         .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(roundPanel2Layout.createSequentialGroup()
-                                .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(roundPanel2Layout.createSequentialGroup()
+                                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(roundPanel2Layout.createSequentialGroup()
+                                        .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 833, Short.MAX_VALUE))
-                .addGap(42, 42, 42))
+                                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 833, Short.MAX_VALUE))
+                        .addGap(42, 42, 42))))
             .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(roundPanel2Layout.createSequentialGroup()
                     .addGap(29, 29, 29)
-                    .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(18, 18, 18)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(78, 78, 78)
                     .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -372,7 +331,9 @@ public class DailyRelease extends javax.swing.JPanel {
             .addGroup(roundPanel2Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(91, 91, 91)
+                .addGap(31, 31, 31)
+                .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
                 .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(roundPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -396,17 +357,16 @@ public class DailyRelease extends javax.swing.JPanel {
                     .addGap(54, 54, 54)
                     .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(roundPanel2Layout.createSequentialGroup()
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(roundPanel2Layout.createSequentialGroup()
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(roundPanel2Layout.createSequentialGroup()
                             .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(40, 40, 40))
+                        .addGroup(roundPanel2Layout.createSequentialGroup()
+                            .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jComboBox2, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
+                                .addComponent(jComboBox3, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))))
                     .addContainerGap(369, Short.MAX_VALUE)))
         );
 
@@ -424,10 +384,6 @@ public class DailyRelease extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
-
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox2ActionPerformed
@@ -441,33 +397,34 @@ public class DailyRelease extends javax.swing.JPanel {
     }//GEN-LAST:event_jTable2MouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String date = String.valueOf(jComboBox1.getSelectedItem());
+        Date date = jDateChooser1.getDate();
         String pump = String.valueOf(jComboBox2.getSelectedItem());
         String employee = String.valueOf(jComboBox3.getSelectedItem());
         Double liters = Double.valueOf(jFormattedTextField1.getText());
         String total = String.valueOf(jFormattedTextField2.getText());
 
-        if (date == "SELECT") {
+        if (date == null) { 
             JOptionPane.showMessageDialog(this, "Please Select Date", "Warning", JOptionPane.WARNING_MESSAGE);
         } else if (pump == "SELECT") {
             JOptionPane.showMessageDialog(this, "Please Select Pump", "Warning", JOptionPane.WARNING_MESSAGE);
         } else if (employee == "SELECT") {
             JOptionPane.showMessageDialog(this, "Please Select Employee", "Warning", JOptionPane.WARNING_MESSAGE);
-        } else if (liters.equals(0.0)) {
+        } else if (liters == 0) {
             JOptionPane.showMessageDialog(this, "Please Enter Liters Pumped", "Warning", JOptionPane.WARNING_MESSAGE);
         } else {
-            int dateId = dateMap.get(date);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formatedDate = sdf.format(date);
             int pumpId = pumpMap.get(pump);
-            int emloyeeId = employeeMap.get(employee);
+            String emloyeeId = employeeMap.get(employee);
 
             if (!total.isEmpty()) {
                 try {
-                    ResultSet resultSet = MySql.execute("SELECT * FROM `pumps_has_release_date` WHERE `release_date_pr_id` = '" + dateId + "' AND `pumps_pu_id` = '" + pumpId + "'");
+                    ResultSet resultSet = MySql.execute("SELECT * FROM `release` WHERE `r_date` = '" + formatedDate + "' AND `pu_id` = '" + pumpId + "'");
                     ResultSet pumpSet = MySql.execute("SELECT * FROM `pumps` WHERE `pu_id` = '"+pumpId+"'");
                     pumpSet.next();
                     if (!resultSet.next()) {
-                        MySql.execute("INSERT INTO `pumps_has_release_date` (`pumps_pu_id`,`release_date_pr_id`,`pumpers_per_id`,`pr_qty`,`sales_total`) VALUES('" + pumpId + "','" + dateId + "','" + emloyeeId + "','" + liters + "','" + totalSales + "')");
-                        MySql.execute("UPDATE `fual` SET `fu_qty` = `fu_qty` - '"+liters+"' WHERE `fu_id` = '"+pumpSet.getInt("fual_fu_id")+"'");
+                        MySql.execute("INSERT INTO `release` (`pu_id`,`r_date`,`e_nic`,`r_qty`,`r_total`) VALUES('" + pumpId + "','" + formatedDate + "','" + emloyeeId + "','" + liters + "','" + totalSales + "')");
+                        MySql.execute("UPDATE `fuel` SET `fu_qty` = `fu_qty` - '"+liters+"' WHERE `fu_id` = '"+pumpSet.getInt("fu_id")+"'");
                         clearRelease();
                         loadRealseData();
                     } else {
@@ -500,7 +457,7 @@ public class DailyRelease extends javax.swing.JPanel {
 
         if (pump != "SELECT") {
             try {
-                ResultSet resultSet = MySql.execute("SELECT * FROM `pumps` INNER JOIN `fual` ON `pumps`.`fual_fu_id` = `fual`.`fu_id` WHERE `pu_id` = '" + pumpId + "'");
+                ResultSet resultSet = MySql.execute("SELECT * FROM `pumps` INNER JOIN `fuel` ON `pumps`.`fu_id` = `fuel`.`fu_id` WHERE `pu_id` = '" + pumpId + "'");
                 resultSet.next();
                 Double price = resultSet.getDouble("unit_price");
                 totalSales = price * liters;
@@ -515,9 +472,9 @@ public class DailyRelease extends javax.swing.JPanel {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton8;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JComboBox<String> jComboBox3;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JFormattedTextField jFormattedTextField1;
     private javax.swing.JFormattedTextField jFormattedTextField2;
     private javax.swing.JLabel jLabel10;

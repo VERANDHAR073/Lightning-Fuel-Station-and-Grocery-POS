@@ -21,32 +21,9 @@ public class Home extends javax.swing.JPanel {
         setOpaque(false);
         jPanel1.setVisible(false);
         jPanel2.setVisible(true);
-        loadExpenseDetails();
         incomeExpenses();
         fualQuantity();
         loadMonth();
-    }
-    
-    private void loadExpenseDetails() {
-        try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `expense_details` INNER JOIN `expense` ON `expense_details`.`expense_ex_id` = `expense`.`ex_id` ORDER BY `date` DESC LIMIT 10");
-
-            DefaultTableModel tm = (DefaultTableModel) jTable1.getModel();
-            tm.setRowCount(0);
-
-            while (resultSet.next()) {
-                Vector<String> pv = new Vector<>();
-                pv.add(resultSet.getString("exd_id"));
-                pv.add(resultSet.getString("ex_name"));
-                pv.add(resultSet.getString("date"));
-                pv.add(resultSet.getString("amount"));
-
-                tm.addRow(pv);
-                jTable1.setModel(tm);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void incomeExpenses() {
@@ -64,91 +41,91 @@ public class Home extends javax.swing.JPanel {
         double[] december = new double[2];
 
         try {
-            ResultSet incomeSet = MySql.execute("SELECT * FROM `pumps_has_release_date` INNER JOIN `release_date` ON `pumps_has_release_date`.`release_date_pr_id` = `release_date`.`pr_id` WHERE YEAR(`release_date`.`pr_date`) = YEAR(CURDATE())");
+            ResultSet incomeSet = MySql.execute("SELECT * FROM `release` WHERE YEAR(`r_date`) = YEAR(CURDATE())");
             while (incomeSet.next()) {
-                LocalDate date = incomeSet.getDate("pr_date").toLocalDate();
+                LocalDate date = incomeSet.getDate("r_date").toLocalDate();
                 int month = date.getMonthValue();
                 switch (month) {
                     case 1:
-                        january[0] += incomeSet.getDouble("sales_total");
+                        january[0] += incomeSet.getDouble("r_total");
                         break;
                     case 2:
-                        february[0] += incomeSet.getDouble("sales_total");
+                        february[0] += incomeSet.getDouble("r_total");
                         break;
                     case 3:
-                        march[0] += incomeSet.getDouble("sales_total");
+                        march[0] += incomeSet.getDouble("r_total");
                         break;
                     case 4:
-                        april[0] += incomeSet.getDouble("sales_total");
+                        april[0] += incomeSet.getDouble("r_total");
                         break;
                     case 5:
-                        may[0] += incomeSet.getDouble("sales_total");
+                        may[0] += incomeSet.getDouble("r_total");
                         break;
                     case 6:
-                        june[0] += incomeSet.getDouble("sales_total");
+                        june[0] += incomeSet.getDouble("r_total");
                         break;
                     case 7:
-                        july[0] += incomeSet.getDouble("sales_total");
+                        july[0] += incomeSet.getDouble("r_total");
                         break;
                     case 8:
-                        august[0] += incomeSet.getDouble("sales_total");
+                        august[0] += incomeSet.getDouble("r_total");
                         break;
                     case 9:
-                        september[0] += incomeSet.getDouble("sales_total");
+                        september[0] += incomeSet.getDouble("r_total");
                         break;
                     case 10:
-                        october[0] += incomeSet.getDouble("sales_total");
+                        october[0] += incomeSet.getDouble("r_total");
                         break;
                     case 11:
-                        november[0] += incomeSet.getDouble("sales_total");
+                        november[0] += incomeSet.getDouble("r_total");
                         break;
                     case 12:
-                        december[0] += incomeSet.getDouble("sales_total");
+                        december[0] += incomeSet.getDouble("r_total");
                         break;
                     default:
                         break;
                 }
             }
-            ResultSet expensesSet = MySql.execute("SELECT * FROM `expense_details` WHERE YEAR(`date`) = YEAR(CURDATE())");
+            ResultSet expensesSet = MySql.execute("SELECT * FROM `fuel_has_suppliers` WHERE YEAR(`date`) = YEAR(CURDATE())");
             while (expensesSet.next()) {
                 LocalDate date = expensesSet.getDate("date").toLocalDate();
                 int month = date.getMonthValue();
                 switch (month) {
                     case 1:
-                        january[1] += expensesSet.getDouble("amount");
+                        january[1] += expensesSet.getDouble("total");
                         break;
                     case 2:
-                        february[1] += expensesSet.getDouble("amount");
+                        february[1] += expensesSet.getDouble("total");
                         break;
                     case 3:
-                        march[1] += expensesSet.getDouble("amount");
+                        march[1] += expensesSet.getDouble("total");
                         break;
                     case 4:
-                        april[1] += expensesSet.getDouble("amount");
+                        april[1] += expensesSet.getDouble("total");
                         break;
                     case 5:
-                        may[1] += expensesSet.getDouble("amount");
+                        may[1] += expensesSet.getDouble("total");
                         break;
                     case 6:
-                        june[1] += expensesSet.getDouble("amount");
+                        june[1] += expensesSet.getDouble("total");
                         break;
                     case 7:
-                        july[1] += expensesSet.getDouble("amount");
+                        july[1] += expensesSet.getDouble("total");
                         break;
                     case 8:
-                        august[1] += expensesSet.getDouble("amount");
+                        august[1] += expensesSet.getDouble("total");
                         break;
                     case 9:
-                        september[1] += expensesSet.getDouble("amount");
+                        september[1] += expensesSet.getDouble("total");
                         break;
                     case 10:
-                        october[1] += expensesSet.getDouble("amount");
+                        october[1] += expensesSet.getDouble("total");
                         break;
                     case 11:
-                        november[1] += expensesSet.getDouble("amount");
+                        november[1] += expensesSet.getDouble("total");
                         break;
                     case 12:
-                        december[1] += expensesSet.getDouble("amount");
+                        december[1] += expensesSet.getDouble("total");
                         break;
                     default:
                         break;
@@ -184,9 +161,9 @@ public class Home extends javax.swing.JPanel {
         String date = d.format(f);
 
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `sa_month` WHERE `month` = '" + date + "'");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `es_month` WHERE `month` = '" + date + "'");
             if (!resultSet.next()) {
-                MySql.execute("INSERT INTO `sa_month` (`month`) VALUES ('" + date + "')");
+                MySql.execute("INSERT INTO `es_month` (`month`) VALUES ('" + date + "')");
                 loadMonth();
             }
         } catch (Exception e) {
@@ -202,7 +179,7 @@ public class Home extends javax.swing.JPanel {
         double[] superDisal = new double[1];
 
         try {
-            ResultSet fualSet = MySql.execute("SELECT * FROM `fual`");
+            ResultSet fualSet = MySql.execute("SELECT * FROM `fuel`");
             while (fualSet.next()) {
                 switch (fualSet.getInt("fu_id")) {
                     case 1:

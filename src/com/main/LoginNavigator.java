@@ -1,7 +1,7 @@
 package com.main;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.main.Main;
+import com.main.AdminNavigator;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import javax.swing.JFrame;
@@ -34,7 +34,6 @@ public class LoginNavigator extends javax.swing.JFrame {
 
         roundPanel1.setBackground(new java.awt.Color(51, 51, 51));
 
-        jLabel5.setBackground(new java.awt.Color(242, 242, 242));
         jLabel5.setFont(new java.awt.Font("Bahnschrift", 1, 24)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -63,7 +62,7 @@ public class LoginNavigator extends javax.swing.JFrame {
         jImagePanel1.setLayout(jImagePanel1Layout);
         jImagePanel1Layout.setHorizontalGroup(
             jImagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 148, Short.MAX_VALUE)
+            .addGap(0, 144, Short.MAX_VALUE)
         );
         jImagePanel1Layout.setVerticalGroup(
             jImagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -82,7 +81,6 @@ public class LoginNavigator extends javax.swing.JFrame {
             }
         });
 
-        jLabel6.setBackground(new java.awt.Color(242, 242, 242));
         jLabel6.setFont(new java.awt.Font("Bahnschrift", 1, 24)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -122,9 +120,6 @@ public class LoginNavigator extends javax.swing.JFrame {
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addGap(124, 124, 124)
-                        .addComponent(jImagePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addGap(25, 25, 25)
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -135,7 +130,10 @@ public class LoginNavigator extends javax.swing.JFrame {
                         .addGap(50, 50, 50)
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addGap(128, 128, 128)
+                        .addComponent(jImagePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
         roundPanel1Layout.setVerticalGroup(
@@ -166,7 +164,7 @@ public class LoginNavigator extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
+            .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -186,11 +184,13 @@ public class LoginNavigator extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
+        this.dispose();
+        new FuelStationLogin().setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
+        this.dispose();
+        new GroceryLogin().setVisible(true);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     public static void main(String args[]) {

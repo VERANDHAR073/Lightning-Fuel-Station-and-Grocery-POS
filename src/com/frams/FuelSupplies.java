@@ -29,13 +29,13 @@ public class FuelSupplies extends javax.swing.JPanel {
     
     private void loadCompanies() {
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `imports`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `suppliers`");
             Vector fv = new Vector();
             fv.add("SELECT");
 
             while (resultSet.next()) {
-                fv.add(resultSet.getString("im_name"));
-                companyMap.put(resultSet.getString("im_name"), resultSet.getInt("im_id"));
+                fv.add(resultSet.getString("su_name"));
+                companyMap.put(resultSet.getString("su_name"), resultSet.getInt("su_id"));
             }
 
             DefaultComboBoxModel cb = new DefaultComboBoxModel(fv);
@@ -47,7 +47,7 @@ public class FuelSupplies extends javax.swing.JPanel {
     
     private void loadFualType() {
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `fual`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `fuel`");
             Vector fv = new Vector();
             fv.add("SELECT");
 
@@ -74,21 +74,21 @@ public class FuelSupplies extends javax.swing.JPanel {
     
     private void loadImports(){
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `fual_has_imports` "
-                    + "INNER JOIN `fual` ON `fual_has_imports`.`fual_fu_id` = `fual`.`fu_id` "
-                    + "INNER JOIN `imports` ON `fual_has_imports`.`imports_im_id` = `imports`.`im_id`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `fuel_has_suppliers` "
+                    + "INNER JOIN `fuel` ON `fuel_has_suppliers`.`fu_id` = `fuel`.`fu_id` "
+                    + "INNER JOIN `suppliers` ON `fuel_has_suppliers`.`su_id` = `suppliers`.`su_id`");
 
             DefaultTableModel tmodel = (DefaultTableModel) jTable4.getModel();
             tmodel.setRowCount(0);
 
             while (resultSet.next()) {
                 Vector<String> fv = new Vector<>();
-                fv.add(resultSet.getString("id"));
-                fv.add(resultSet.getString("im_name"));
+                fv.add(resultSet.getString("fhs_id"));
+                fv.add(resultSet.getString("su_name"));
                 fv.add(resultSet.getString("fu_name"));
                 fv.add(resultSet.getString("date"));
                 fv.add(resultSet.getString("qty"));
-                fv.add(resultSet.getString("unit_price"));
+                fv.add(resultSet.getString("buying_price"));
                 fv.add(resultSet.getString("total"));
 
                 tmodel.addRow(fv);
@@ -389,8 +389,8 @@ public class FuelSupplies extends javax.swing.JPanel {
         String date = d.format(f);
             
             try {
-                MySql.execute("INSERT INTO `fual_has_imports` (`fual_fu_id`,`imports_im_id`,`date`,`qty`,`unit_price`,`total`) VALUES('"+fualTypeId+"','"+companyId+"','"+date+"','"+quantity+"','"+price+"','"+totalCost+"')");
-                MySql.execute("UPDATE `fual` SET `fu_qty` = `fu_qty` + '"+quantity+"' WHERE `fu_id` = '"+fualTypeId+"'");
+                MySql.execute("INSERT INTO `fuel_has_suppliers` (`fu_id`,`su_id`,`date`,`qty`,`buying_price`,`total`) VALUES('"+fualTypeId+"','"+companyId+"','"+date+"','"+quantity+"','"+price+"','"+totalCost+"')");
+                MySql.execute("UPDATE `fuel` SET `fu_qty` = `fu_qty` + '"+quantity+"' WHERE `fu_id` = '"+fualTypeId+"'");
                 clearImports();
                 loadImports();
             } catch (Exception e) {

@@ -10,11 +10,13 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import com.model.MySql;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MarkAttendence extends javax.swing.JPanel {
 
     private static HashMap<String, Integer> dateMap = new HashMap<>();
-    private static HashMap<String, Integer> pumpersMap = new HashMap<>();
+    private static HashMap<String, String> pumpersMap = new HashMap<>();
     private static HashMap<String, Integer> attendenceMap = new HashMap<>();
 
     private String pumperId;
@@ -24,59 +26,21 @@ public class MarkAttendence extends javax.swing.JPanel {
         initComponents();
         setOpaque(false);
         setBackground(new Color(0, 0, 0, 0));
-        loadDate();
         loadEmployee();
         loadStatus();
         loadAttendenceDetails();
         jButton3.setVisible(false);
     }
 
-    private void loadDate() {
-        try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `attendence_date` ORDER BY `date` DESC");
-            Vector fv = new Vector();
-            fv.add("SELECT");
-
-            while (resultSet.next()) {
-                fv.add(resultSet.getString("date"));
-                dateMap.put(resultSet.getString("date"), resultSet.getInt("d_id"));
-            }
-
-            DefaultComboBoxModel cb = new DefaultComboBoxModel(fv);
-            jComboBox1.setModel(cb);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadDate(String seDate) {
-        try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `attendence_date` ORDER BY `date` DESC");
-            Vector fv = new Vector();
-            fv.add("SELECT");
-
-            while (resultSet.next()) {
-                fv.add(resultSet.getString("date"));
-                dateMap.put(resultSet.getString("date"), resultSet.getInt("d_id"));
-            }
-
-            DefaultComboBoxModel cb = new DefaultComboBoxModel(fv);
-            jComboBox1.setModel(cb);
-            jComboBox1.setSelectedItem(seDate);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void loadEmployee() {
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `pumpers`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `employees`");
             Vector fv = new Vector();
             fv.add("SELECT");
 
             while (resultSet.next()) {
-                fv.add(resultSet.getString("per_name"));
-                pumpersMap.put(resultSet.getString("per_name"), resultSet.getInt("per_id"));
+                fv.add(resultSet.getString("e_fname")+" "+resultSet.getString("e_lname"));
+                pumpersMap.put(resultSet.getString("e_fname")+" "+resultSet.getString("e_lname"), resultSet.getString("e_nic"));
             }
 
             DefaultComboBoxModel cb = new DefaultComboBoxModel(fv);
@@ -88,13 +52,13 @@ public class MarkAttendence extends javax.swing.JPanel {
 
     private void loadStatus() {
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `attendence`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `attendance_status`");
             Vector fv = new Vector();
             fv.add("SELECT");
 
             while (resultSet.next()) {
-                fv.add(resultSet.getString("att_status"));
-                attendenceMap.put(resultSet.getString("att_status"), resultSet.getInt("att_id"));
+                fv.add(resultSet.getString("as_status"));
+                attendenceMap.put(resultSet.getString("as_status"), resultSet.getInt("as_id"));
             }
 
             DefaultComboBoxModel cb = new DefaultComboBoxModel(fv);
@@ -107,8 +71,8 @@ public class MarkAttendence extends javax.swing.JPanel {
     private void clear() {
         jComboBox3.setSelectedIndex(0);
         jComboBox4.setSelectedIndex(0);
-        jButton2.setVisible(true);
-        jButton3.setVisible(false);
+//        jButton2.setVisible(true);
+//        jButton3.setVisible(false);
     }
 
     private void loadAttendenceDetails() {
@@ -117,44 +81,24 @@ public class MarkAttendence extends javax.swing.JPanel {
             DateTimeFormatter f = DateTimeFormatter.ofPattern("yyy-MM-dd");
 
             String date = d.format(f);
-            ResultSet resultSet = MySql.execute("SELECT * FROM `mark_attendence` "
-                    + "INNER JOIN `pumpers` ON `mark_attendence`.`pumpers_per_id` = `pumpers`.`per_id` "
-                    + "INNER JOIN `attendence` ON `mark_attendence`.`attendence_id` = `attendence`.`att_id` "
-                    + "INNER JOIN `attendence_date` ON `mark_attendence`.`attendence_date_d_id` = `attendence_date`.`d_id` "
-                    + "WHERE `date`= '" + date + "'");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `mark_attendance` "
+                    + "INNER JOIN `employees` ON `mark_attendance`.`e_nic` = `employees`.`e_nic` "
+                    + "INNER JOIN `attendance_status` ON `mark_attendance`.`as_id` = `attendance_status`.`as_id` "
+                    + "WHERE `ma_date`= '" + date + "'");
 
             DefaultTableModel tm = (DefaultTableModel) jTable2.getModel();
             tm.setRowCount(0);
 
             while (resultSet.next()) {
                 Vector<String> pv = new Vector<>();
-                pv.add(resultSet.getString("id"));
-                pv.add(resultSet.getString("per_name"));
-                pv.add(resultSet.getString("contact"));
-                pv.add(resultSet.getString("att_status"));
+                pv.add(resultSet.getString("ma_id"));
+                pv.add(resultSet.getString("e_fname")+ " "+ resultSet.getString("e_lname"));
+                pv.add(resultSet.getString("e_contact"));
+                pv.add(resultSet.getString("as_status"));
 
                 tm.addRow(pv);
                 jTable2.setModel(tm);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadAttendenceEdit() {
-        try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `mark_attendence` "
-                    + "INNER JOIN `pumpers` ON `mark_attendence`.`pumpers_per_id` = `pumpers`.`per_id` "
-                    + "INNER JOIN `attendence` ON `mark_attendence`.`attendence_id` = `attendence`.`att_id` "
-                    + "INNER JOIN `attendence_date` ON `mark_attendence`.`attendence_date_d_id` = `attendence_date`.`d_id` "
-                    + "WHERE `id`= '" + markId + "'");
-            resultSet.next();
-            jComboBox1.setSelectedItem(resultSet.getString("date"));
-            jComboBox3.setSelectedItem(resultSet.getString("per_name"));
-            jComboBox4.setSelectedItem(resultSet.getString("att_status"));
-            jButton2.setVisible(false);
-            jButton3.setVisible(true);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -170,15 +114,14 @@ public class MarkAttendence extends javax.swing.JPanel {
         jButton2 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
-        jLabel7 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jComboBox3 = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
         jComboBox4 = new javax.swing.JComboBox<>();
-        jButton4 = new javax.swing.JButton();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jLabel7 = new javax.swing.JLabel();
 
         roundPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
@@ -246,13 +189,6 @@ public class MarkAttendence extends javax.swing.JPanel {
             jTable2.getColumnModel().getColumn(3).setResizable(false);
         }
 
-        jLabel7.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel7.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel7.setText("Date");
-        jLabel7.setToolTipText("");
-
         jButton3.setBackground(new java.awt.Color(51, 51, 51));
         jButton3.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
         jButton3.setForeground(new java.awt.Color(255, 255, 255));
@@ -260,17 +196,6 @@ public class MarkAttendence extends javax.swing.JPanel {
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
-            }
-        });
-
-        jComboBox1.setBackground(new java.awt.Color(102, 102, 102));
-        jComboBox1.setFont(new java.awt.Font("Quicksand", 0, 12)); // NOI18N
-        jComboBox1.setForeground(new java.awt.Color(255, 255, 255));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.setPreferredSize(new java.awt.Dimension(64, 22));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
             }
         });
 
@@ -317,15 +242,16 @@ public class MarkAttendence extends javax.swing.JPanel {
             }
         });
 
-        jButton4.setBackground(new java.awt.Color(51, 51, 51));
-        jButton4.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setText("Start Marking");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
+        jDateChooser1.setBackground(new java.awt.Color(51, 51, 51));
+        jDateChooser1.setForeground(new java.awt.Color(255, 255, 255));
+        jDateChooser1.setPreferredSize(new java.awt.Dimension(64, 22));
+
+        jLabel7.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel7.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel7.setText("Date");
+        jLabel7.setToolTipText("");
 
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
@@ -334,30 +260,32 @@ public class MarkAttendence extends javax.swing.JPanel {
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1199, Short.MAX_VALUE)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1199, Short.MAX_VALUE))
+                            .addGroup(roundPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(roundPanel1Layout.createSequentialGroup()
+                                .addGap(3, 3, 3)
+                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(roundPanel1Layout.createSequentialGroup()
+                                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(27, 27, 27))
         );
         roundPanel1Layout.setVerticalGroup(
@@ -369,23 +297,20 @@ public class MarkAttendence extends javax.swing.JPanel {
                 .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(68, 68, 68)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(roundPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -409,38 +334,41 @@ public class MarkAttendence extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
-        if (evt.getClickCount() == 2) {
-            int selectedRow = jTable2.getSelectedRow();
-            String mattenId = String.valueOf(jTable2.getValueAt(selectedRow, 0));
-            markId = mattenId;
-            loadAttendenceEdit();
-        }
+//        if (evt.getClickCount() == 2) {
+//            int selectedRow = jTable2.getSelectedRow();
+//            String att_id = String.valueOf(jTable2.getValueAt(selectedRow, 0));
+//            int selectOption=JOptionPane.showConfirmDialog(this,"Are you sure about delete attedence you marked","Confirm",JOptionPane.YES_NO_OPTION);
+//        if(selectOption == JOptionPane.YES_OPTION){
+//            MySql.execute("")
+//        } 
+//        }
     }//GEN-LAST:event_jTable2MouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String date = String.valueOf(jComboBox1.getSelectedItem());
+        Date date = jDateChooser1.getDate();
         String employee = String.valueOf(jComboBox3.getSelectedItem());
         String status = String.valueOf(jComboBox4.getSelectedItem());
 
-        if (date == "SELECT") {
+        if (date == null) {
             JOptionPane.showMessageDialog(this, "Please Select Date", "Warning", JOptionPane.WARNING_MESSAGE);
         } else if (employee == "SELECT") {
             JOptionPane.showMessageDialog(this, "Please Select Employee", "Warning", JOptionPane.WARNING_MESSAGE);
         } else if (status == "SELECT") {
             JOptionPane.showMessageDialog(this, "Please Select Status", "Warning", JOptionPane.WARNING_MESSAGE);
         } else {
-            int dateId = dateMap.get(date);
-            int employeeId = pumpersMap.get(employee);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formatedDate = sdf.format(date);
+            String employeeId = pumpersMap.get(employee);
             int statusId = attendenceMap.get(status);
 
             try {
-                ResultSet resultSet = MySql.execute("SELECT * FROM `mark_attendence` WHERE `pumpers_per_id` = '" + employeeId + "' AND `attendence_date_d_id` = '" + dateId + "'");
+                ResultSet resultSet = MySql.execute("SELECT * FROM `mark_attendance` WHERE `e_nic` = '" + employeeId + "' AND `ma_date` = '" + formatedDate + "'");
                 if (!resultSet.next()) {
-                    MySql.execute("INSERT INTO `mark_attendence` (`pumpers_per_id`,`attendence_id`,`attendence_date_d_id`) VALUES('" + employeeId + "','" + statusId + "','" + dateId + "')");
+                    MySql.execute("INSERT INTO `mark_attendance` (`e_nic`,`as_id`,`ma_date`) VALUES('" + employeeId + "','" + statusId + "','" + formatedDate + "')");
                     clear();
                     loadAttendenceDetails();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Already Marked Attendence", "Warning", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Already Marked Attendance", "Warning", JOptionPane.ERROR_MESSAGE);
                 }
 
             } catch (Exception e) {
@@ -454,35 +382,31 @@ public class MarkAttendence extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        String date = String.valueOf(jComboBox1.getSelectedItem());
-        String employee = String.valueOf(jComboBox3.getSelectedItem());
-        String status = String.valueOf(jComboBox4.getSelectedItem());
-
-        if (date == "SELECT") {
-            JOptionPane.showMessageDialog(this, "Please Select Date", "Warning", JOptionPane.WARNING_MESSAGE);
-        } else if (employee == "SELECT") {
-            JOptionPane.showMessageDialog(this, "Please Select Employee", "Warning", JOptionPane.WARNING_MESSAGE);
-        } else if (status == "SELECT") {
-            JOptionPane.showMessageDialog(this, "Please Select Status", "Warning", JOptionPane.WARNING_MESSAGE);
-        } else {
-            int dateId = dateMap.get(date);
-            int employeeId = pumpersMap.get(employee);
-            int statusId = attendenceMap.get(status);
-
-            try {
-                MySql.execute("UPDATE `mark_attendence` SET `pumpers_per_id` = '"+employeeId+"',`attendence_id` = '"+statusId+"',`attendence_date_d_id` = '"+dateId+"' WHERE `id` = '"+markId+"'");
-                clear();
-                loadAttendenceDetails();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        String date = String.valueOf(jComboBox1.getSelectedItem());
+//        String employee = String.valueOf(jComboBox3.getSelectedItem());
+//        String status = String.valueOf(jComboBox4.getSelectedItem());
+//
+//        if (date == "SELECT") {
+//            JOptionPane.showMessageDialog(this, "Please Select Date", "Warning", JOptionPane.WARNING_MESSAGE);
+//        } else if (employee == "SELECT") {
+//            JOptionPane.showMessageDialog(this, "Please Select Employee", "Warning", JOptionPane.WARNING_MESSAGE);
+//        } else if (status == "SELECT") {
+//            JOptionPane.showMessageDialog(this, "Please Select Status", "Warning", JOptionPane.WARNING_MESSAGE);
+//        } else {
+//            int dateId = dateMap.get(date);
+//            int employeeId = pumpersMap.get(employee);
+//            int statusId = attendenceMap.get(status);
+//
+//            try {
+//                MySql.execute("UPDATE `mark_attendence` SET `pumpers_per_id` = '"+employeeId+"',`attendence_id` = '"+statusId+"',`attendence_date_d_id` = '"+dateId+"' WHERE `id` = '"+markId+"'");
+//                clear();
+//                loadAttendenceDetails();
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
         // TODO add your handling code here:
@@ -492,33 +416,14 @@ public class MarkAttendence extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox4ActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        LocalDate d = LocalDate.now();
-        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        String date = d.format(f);
-        try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `attendence_date` WHERE `date` = '" + date + "'");
-            if (!resultSet.next()) {
-                MySql.execute("INSERT INTO `attendence_date` (`date`) VALUES ('" + date + "')");
-                loadDate(date);
-            } else {
-                loadDate(date);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_jButton4ActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JComboBox<String> jComboBox4;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel5;

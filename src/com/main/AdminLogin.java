@@ -192,9 +192,9 @@ public class AdminLogin extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Please Enter Pasword", "Warning", JOptionPane.WARNING_MESSAGE);
         }else{
             try {
-                ResultSet resultSet = MySql.execute("SELECT * FROM `admin` WHERE `username` = '"+username+"' AND `password` = '"+password+"'");
+                ResultSet resultSet = MySql.execute("SELECT * FROM `employee_login` INNER JOIN `employees` ON `employee_login`.`e_nic` = `employees`.`e_nic` WHERE `username` = '"+username+"' AND `password` = '"+password+"'");
                 if(resultSet.next()){
-                    String name = resultSet.getString("name");
+                    String name = resultSet.getString("e_fname")+ " " + resultSet.getString("e_lname");
                     
                     UserDetails user = new UserDetails();
                     user.setName(name);

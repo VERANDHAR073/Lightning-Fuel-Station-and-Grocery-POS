@@ -6,32 +6,37 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import com.model.MySql;
+import java.util.HashMap;
+import javax.swing.DefaultComboBoxModel;
 
-public class PumpersReg extends javax.swing.JPanel {
+public class EmployeeReg extends javax.swing.JPanel {
 
-    private String pumperId;
+    private String employeeId;
+    private static HashMap<String, Integer> employeeTypeMap = new HashMap<>();
 
-    public PumpersReg() {
+    public EmployeeReg() {
         initComponents();
         setOpaque(false);
         setBackground(new Color(0, 0, 0, 0));
         jButton3.setVisible(false);
         loadPumpers();
+        loadEmployeeType();
     }
 
     private void loadPumpers() {
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `pumpers`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `employees` INNER JOIN `employee_type` ON `employees`.`et_id` = `employee_type`.`et_id`");
 
             DefaultTableModel comTable = (DefaultTableModel) jTable2.getModel();
             comTable.setRowCount(0);
 
             while (resultSet.next()) {
                 Vector<String> cv = new Vector();
-                cv.add(resultSet.getString("per_id"));
-                cv.add(resultSet.getString("per_name"));
-                cv.add(resultSet.getString("per_age"));
-                cv.add(resultSet.getString("contact"));
+                cv.add(resultSet.getString("e_nic"));
+                cv.add(resultSet.getString("e_fname"));
+                cv.add(resultSet.getString("e_lname"));
+                cv.add(resultSet.getString("et_name"));
+                cv.add(resultSet.getString("e_contact"));
                 cv.add(resultSet.getString("daily_salary"));
 
                 comTable.addRow(cv);
@@ -46,20 +51,57 @@ public class PumpersReg extends javax.swing.JPanel {
         jTextField1.setText("");
         jTextField3.setText("");
         jTextField4.setText("");
-        jFormattedTextField1.setText("");
         jButton3.setVisible(false);
         jButton2.setVisible(true);
     }
 
+    private void loadEmployeeType() {
+        try {
+            ResultSet resultSet = MySql.execute("SELECT * FROM `employee_type`");
+            Vector fv = new Vector();
+            fv.add("SELECT");
+
+            while (resultSet.next()) {
+                fv.add(resultSet.getString("et_name"));
+                employeeTypeMap.put(resultSet.getString("et_name"), resultSet.getInt("et_id"));
+            }
+
+            DefaultComboBoxModel cb = new DefaultComboBoxModel(fv);
+            jComboBox1.setModel(cb);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadEmployeeType(String typeId) {
+        try {
+            ResultSet resultSet = MySql.execute("SELECT * FROM `employee_type`");
+            Vector fv = new Vector();
+            fv.add("SELECT");
+
+            while (resultSet.next()) {
+                fv.add(resultSet.getString("et_name"));
+                employeeTypeMap.put(resultSet.getString("et_name"), resultSet.getInt("et_id"));
+            }
+
+            DefaultComboBoxModel cb = new DefaultComboBoxModel(fv);
+            jComboBox1.setModel(cb);
+            jComboBox1.setSelectedIndex(Integer.parseInt(typeId));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void loadPumperDetails() {
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `pumpers` WHERE `per_id` = '" + pumperId + "'");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `employees` INNER JOIN `employee_type` ON `employees`.`et_id` = `employee_type`.`et_id` WHERE `e_nic` = '" + employeeId + "'");
             resultSet.next();
             clean();
-            jTextField1.setText(resultSet.getString("per_name"));
-            jTextField3.setText(resultSet.getString("per_age"));
-            jTextField4.setText(resultSet.getString("contact"));
-            jFormattedTextField1.setText(resultSet.getString("daily_salary"));
+            jTextField2.setText(resultSet.getString("e_nic"));
+            jTextField1.setText(resultSet.getString("e_fname"));
+            jTextField3.setText(resultSet.getString("e_lname"));
+            jTextField4.setText(resultSet.getString("e_contact"));
+            loadEmployeeType(resultSet.getString("et_id"));
             jButton2.setVisible(false);
             jButton3.setVisible(true);
 
@@ -85,9 +127,11 @@ public class PumpersReg extends javax.swing.JPanel {
         jLabel12 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
-        jFormattedTextField1 = new javax.swing.JFormattedTextField();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel10 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
 
         roundPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
@@ -95,7 +139,7 @@ public class PumpersReg extends javax.swing.JPanel {
         jLabel5.setFont(new java.awt.Font("Quicksand", 1, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel5.setText("Pumpers Register");
+        jLabel5.setText("Employee Register");
         jLabel5.setToolTipText("");
 
         jButton1.setBackground(new java.awt.Color(51, 51, 51));
@@ -123,17 +167,17 @@ public class PumpersReg extends javax.swing.JPanel {
         jTable2.setForeground(new java.awt.Color(255, 255, 255));
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Id", "Name", "Age", "Contact", "Daily Salary"
+                "NIC", "First Name", "Last Name", "Employee Type", "Contact", "Daily Salary"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -154,6 +198,7 @@ public class PumpersReg extends javax.swing.JPanel {
             jTable2.getColumnModel().getColumn(2).setResizable(false);
             jTable2.getColumnModel().getColumn(3).setResizable(false);
             jTable2.getColumnModel().getColumn(4).setResizable(false);
+            jTable2.getColumnModel().getColumn(5).setResizable(false);
         }
 
         jTextField1.setBackground(new java.awt.Color(102, 102, 102));
@@ -163,7 +208,7 @@ public class PumpersReg extends javax.swing.JPanel {
         jLabel7.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel7.setText("Name");
+        jLabel7.setText("First Name");
         jLabel7.setToolTipText("");
 
         jTextField3.setBackground(new java.awt.Color(102, 102, 102));
@@ -173,7 +218,7 @@ public class PumpersReg extends javax.swing.JPanel {
         jLabel12.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(255, 255, 255));
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel12.setText("Age");
+        jLabel12.setText("Last Name");
         jLabel12.setToolTipText("");
 
         jTextField4.setBackground(new java.awt.Color(102, 102, 102));
@@ -186,13 +231,6 @@ public class PumpersReg extends javax.swing.JPanel {
         jLabel13.setText("Contact");
         jLabel13.setToolTipText("");
 
-        jLabel14.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel14.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel14.setText("Daily Salary");
-        jLabel14.setToolTipText("");
-
         jButton3.setBackground(new java.awt.Color(51, 51, 51));
         jButton3.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
         jButton3.setForeground(new java.awt.Color(255, 255, 255));
@@ -203,49 +241,72 @@ public class PumpersReg extends javax.swing.JPanel {
             }
         });
 
-        jFormattedTextField1.setBackground(new java.awt.Color(102, 102, 102));
-        jFormattedTextField1.setForeground(new java.awt.Color(255, 255, 255));
-        jFormattedTextField1.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        jFormattedTextField1.setFont(new java.awt.Font("Quicksand", 0, 12)); // NOI18N
+        jComboBox1.setBackground(new java.awt.Color(102, 102, 102));
+        jComboBox1.setFont(new java.awt.Font("Quicksand", 0, 12)); // NOI18N
+        jComboBox1.setForeground(new java.awt.Color(255, 255, 255));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setPreferredSize(new java.awt.Dimension(64, 22));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel10.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel10.setText("Fual Type");
+        jLabel10.setToolTipText("");
+
+        jTextField2.setBackground(new java.awt.Color(102, 102, 102));
+        jTextField2.setForeground(new java.awt.Color(255, 255, 255));
+
+        jLabel8.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel8.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel8.setText("NIC");
+        jLabel8.setToolTipText("");
 
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
         roundPanel1Layout.setHorizontalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2)
-                .addContainerGap())
-            .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2)
+                        .addGap(23, 23, 23))
                     .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(roundPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(roundPanel1Layout.createSequentialGroup()
                                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(48, 48, 48)
                                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(48, 48, 48)
-                                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(48, 48, 48)
+                                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                     .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(48, 48, 48)
-                                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(100, Short.MAX_VALUE))))
+                                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(117, 401, Short.MAX_VALUE))))
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -253,13 +314,9 @@ public class PumpersReg extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jFormattedTextField1))
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -269,15 +326,26 @@ public class PumpersReg extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(roundPanel1Layout.createSequentialGroup()
+                            .addGap(32, 32, 32)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(103, Short.MAX_VALUE))
+                .addGap(12, 12, 12))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -299,31 +367,35 @@ public class PumpersReg extends javax.swing.JPanel {
     private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
         if (evt.getClickCount() == 2) {
             int selectedRow = jTable2.getSelectedRow();
-            String pumperId = String.valueOf(jTable2.getValueAt(selectedRow, 0));
-            this.pumperId = pumperId;
+            String employeeId = String.valueOf(jTable2.getValueAt(selectedRow, 0));
+            this.employeeId = employeeId;
             loadPumperDetails();
         }
     }//GEN-LAST:event_jTable2MouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String name = jTextField1.getText();
+        String nic = jTextField2.getText();
+        String fname = jTextField1.getText();
+        String lname = jTextField3.getText();
         String contact = jTextField4.getText();
-        String age = jTextField3.getText();
-        String salary = jFormattedTextField1.getText();
+        String type = String.valueOf(jComboBox1.getSelectedItem());
 
-        if (name.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please Enter Name", "Warning", JOptionPane.WARNING_MESSAGE);
+        if (nic.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter Nic Number", "Warning", JOptionPane.WARNING_MESSAGE);
+        } else if (fname.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter First Name", "Warning", JOptionPane.WARNING_MESSAGE);
+        } else if (lname.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter Last Name", "Warning", JOptionPane.WARNING_MESSAGE);
         } else if (contact.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please Enter Contact Number", "Warning", JOptionPane.WARNING_MESSAGE);
         } else if (!contact.matches("0[137][01245678]{1}[0-9]{7}$")) {
             JOptionPane.showMessageDialog(this, "Please Enter Valid Contact", "Warning", JOptionPane.WARNING_MESSAGE);
-        } else if (age.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please Enter Age", "Warning", JOptionPane.WARNING_MESSAGE);
-        } else if (salary.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please Enter Daily Salary", "Warning", JOptionPane.WARNING_MESSAGE);
+        } else if (type == "SELECT") {
+            JOptionPane.showMessageDialog(this, "Please Select Employee Type", "Warning", JOptionPane.WARNING_MESSAGE);
         } else {
             try {
-                MySql.execute("INSERT INTO `pumpers` (`per_name`,`per_age`,`contact`,`daily_salary`) VALUES('" + name + "','" + age + "','" + contact + "','" + salary + "')");
+                int typeId = employeeTypeMap.get(type);
+                MySql.execute("INSERT INTO `employees` (`e_nic`,`e_fname`,`e_lname`,`e_contact`,`et_id`) VALUES('" + nic + "','" + fname + "','" + lname + "','" + contact + "','" + typeId + "')");
                 loadPumpers();
                 clean();
             } catch (Exception e) {
@@ -337,24 +409,28 @@ public class PumpersReg extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        String name = jTextField1.getText();
+        String nic = jTextField2.getText();
+        String fname = jTextField1.getText();
+        String lname = jTextField3.getText();
         String contact = jTextField4.getText();
-        String age = jTextField3.getText();
-        String salary = jFormattedTextField1.getText();
+        String type = String.valueOf(jComboBox1.getSelectedItem());
 
-        if (name.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please Enter Name", "Warning", JOptionPane.WARNING_MESSAGE);
+        if (nic.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter Nic Number", "Warning", JOptionPane.WARNING_MESSAGE);
+        } else if (fname.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter First Name", "Warning", JOptionPane.WARNING_MESSAGE);
+        } else if (lname.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter Last Name", "Warning", JOptionPane.WARNING_MESSAGE);
         } else if (contact.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please Enter Contact Number", "Warning", JOptionPane.WARNING_MESSAGE);
         } else if (!contact.matches("0[137][01245678]{1}[0-9]{7}$")) {
             JOptionPane.showMessageDialog(this, "Please Enter Valid Contact", "Warning", JOptionPane.WARNING_MESSAGE);
-        } else if (age.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please Enter Age", "Warning", JOptionPane.WARNING_MESSAGE);
-        } else if (salary.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please Enter Daily Salary", "Warning", JOptionPane.WARNING_MESSAGE);
+        } else if (type == "SELECT") {
+            JOptionPane.showMessageDialog(this, "Please Select Employee Type", "Warning", JOptionPane.WARNING_MESSAGE);
         } else {
             try {
-                MySql.execute("UPDATE `pumpers` SET `per_name` = '"+name+"',`per_age` = '"+age+"',`contact` = '"+contact+"', `daily_salary` = '"+salary+"' WHERE `per_id` = '"+pumperId+"'");
+                int typeId = employeeTypeMap.get(type);
+                MySql.execute("UPDATE `employees` SET `e_nic` = '" + nic + "', `e_fname` = '" + fname + "',`e_lname` = '" + lname + "', `e_contact` = '" + contact + "', `et_id` = '" + typeId + "' WHERE `e_nic` = '" + employeeId + "'");
                 loadPumpers();
                 clean();
             } catch (Exception e) {
@@ -363,20 +439,26 @@ public class PumpersReg extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JFormattedTextField jFormattedTextField1;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private com.swing.RoundPanel roundPanel1;

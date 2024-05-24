@@ -28,7 +28,7 @@ public class FualAndPumpReg extends javax.swing.JPanel {
     
     private void loadFualType(){
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `fual`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `fuel`");
             Vector fv = new Vector();
             fv.add("SELECT");
             
@@ -46,7 +46,7 @@ public class FualAndPumpReg extends javax.swing.JPanel {
     
     private void loadFualType(String pump){
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `fual`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `fuel`");
             Vector fv = new Vector();
             fv.add("SELECT");
             
@@ -65,7 +65,7 @@ public class FualAndPumpReg extends javax.swing.JPanel {
 
     private void loadFualDetails() {
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `fual` WHERE `fu_id` = '" + fualId + "'");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `fuel` WHERE `fu_id` = '" + fualId + "'");
             resultSet.next();
             jTextField1.setText(resultSet.getString("fu_name"));
             jFormattedTextField1.setText(resultSet.getString("unit_price"));
@@ -78,7 +78,7 @@ public class FualAndPumpReg extends javax.swing.JPanel {
 
     private void loadFual() {
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `fual`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `fuel`");
 
             DefaultTableModel tmodel = (DefaultTableModel) jTable1.getModel();
             tmodel.setRowCount(0);
@@ -113,7 +113,7 @@ public class FualAndPumpReg extends javax.swing.JPanel {
     
     private void loadPumpDetails(){
         try {
-            ResultSet resultSet = MySql.execute("SELECT * FROM `pumps` INNER JOIN `fual` WHERE `pumps`.`fual_fu_id` = `fual`.`fu_id`");
+            ResultSet resultSet = MySql.execute("SELECT * FROM `pumps` INNER JOIN `fuel` WHERE `pumps`.`fu_id` = `fuel`.`fu_id`");
             
             DefaultTableModel tm = (DefaultTableModel) jTable2.getModel();
             tm.setRowCount(0);
@@ -137,7 +137,7 @@ public class FualAndPumpReg extends javax.swing.JPanel {
             ResultSet resultSet = MySql.execute("SELECT * FROM `pumps`");
             resultSet.next();
             jTextField2.setText(resultSet.getString("pu_name"));
-            loadFualType(resultSet.getString("fual_fu_id"));
+            loadFualType(resultSet.getString("fu_id"));
             jButton6.setVisible(true);
             jButton3.setVisible(false);
         } catch (Exception e) {
@@ -446,11 +446,12 @@ public class FualAndPumpReg extends javax.swing.JPanel {
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29))
+                .addGap(11, 11, 11))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -479,7 +480,7 @@ public class FualAndPumpReg extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Please Enter Price", "Warning", JOptionPane.WARNING_MESSAGE);
         } else {
             try {
-                MySql.execute("INSERT INTO `fual` (`fu_name`,`fu_qty`,`unit_price`) VALUES ('" + name + "','0','" + Double.valueOf(price) + "')");
+                MySql.execute("INSERT INTO `fuel` (`fu_name`,`fu_qty`,`unit_price`) VALUES ('" + name + "','0','" + Double.valueOf(price) + "')");
                 clearFual();
                 loadFual();
 
@@ -508,7 +509,7 @@ public class FualAndPumpReg extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Please Enter Price", "Warning", JOptionPane.WARNING_MESSAGE);
         } else {
             try {
-                MySql.execute("UPDATE `fual` SET `fu_name` = '"+name+"',`unit_price` = '"+Double.valueOf(price)+"' WHERE `fu_id` = '"+fualId+"'");
+                MySql.execute("UPDATE `fuel` SET `fu_name` = '"+name+"',`unit_price` = '"+Double.valueOf(price)+"' WHERE `fu_id` = '"+fualId+"'");
                 clearFual();
                 loadFual();
 
@@ -533,7 +534,7 @@ public class FualAndPumpReg extends javax.swing.JPanel {
         }else{
             int typeId = fualMap.get(type);
             try {
-                MySql.execute("INSERT INTO `pumps` (`pu_name`,`fual_fu_id`) VALUES('"+name+"','"+typeId+"')");
+                MySql.execute("INSERT INTO `pumps` (`pu_name`,`fu_id`) VALUES('"+name+"','"+typeId+"')");
                 clearPump();
                 loadPumpDetails();
             } catch (Exception e) {
@@ -566,7 +567,7 @@ public class FualAndPumpReg extends javax.swing.JPanel {
         }else{
             int typeId = fualMap.get(type);
             try {
-                MySql.execute("UPDATE `pumps` SET `pu_name` = '"+name+"', `fual_fu_id` = '"+typeId+"' WHERE `pu_id` = '"+pumpId+"'");
+                MySql.execute("UPDATE `pumps` SET `pu_name` = '"+name+"', `fu_id` = '"+typeId+"' WHERE `pu_id` = '"+pumpId+"'");
                 clearPump();
                 loadPumpDetails();
             } catch (Exception e) {
