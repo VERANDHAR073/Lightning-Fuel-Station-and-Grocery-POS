@@ -193,7 +193,7 @@ public class GroceryLogin extends javax.swing.JFrame {
         }else{
             try {
                 ResultSet resultSet = MySql.execute("SELECT * FROM `employee_login` INNER JOIN `employees` ON `employee_login`.`e_nic`=`employees`.`e_nic` "
-                        + " WHERE `username` = '"+username+"' AND `password` = '"+password+"' AND `et_id`='3'");
+                        + " WHERE `username` = '"+username+"' AND `password` = '"+password+"' AND `et_id`IN('1','3')");
                 if(resultSet.next()){
                     String name = resultSet.getString("e_fname")+" "+resultSet.getString("e_lname");
                     

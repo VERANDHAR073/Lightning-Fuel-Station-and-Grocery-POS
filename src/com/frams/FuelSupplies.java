@@ -26,7 +26,6 @@ public class FuelSupplies extends javax.swing.JPanel {
         loadImports();
     }
 
-    
     private void loadCompanies() {
         try {
             ResultSet resultSet = MySql.execute("SELECT * FROM `suppliers`");
@@ -44,7 +43,7 @@ public class FuelSupplies extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-    
+
     private void loadFualType() {
         try {
             ResultSet resultSet = MySql.execute("SELECT * FROM `fuel`");
@@ -63,16 +62,15 @@ public class FuelSupplies extends javax.swing.JPanel {
         }
     }
 
-
-    private void clearImports(){
+    private void clearImports() {
         jComboBox5.setSelectedIndex(0);
         jComboBox11.setSelectedIndex(0);
         jFormattedTextField5.setText("");
         jFormattedTextField6.setText("");
         jFormattedTextField7.setText("");
     }
-    
-    private void loadImports(){
+
+    private void loadImports() {
         try {
             ResultSet resultSet = MySql.execute("SELECT * FROM `fuel_has_suppliers` "
                     + "INNER JOIN `fuel` ON `fuel_has_suppliers`.`fu_id` = `fuel`.`fu_id` "
@@ -98,6 +96,7 @@ public class FuelSupplies extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -279,35 +278,38 @@ public class FuelSupplies extends javax.swing.JPanel {
             .addGroup(roundPanel2Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
                     .addGroup(roundPanel2Layout.createSequentialGroup()
                         .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox11, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jFormattedTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(roundPanel2Layout.createSequentialGroup()
-                        .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(roundPanel2Layout.createSequentialGroup()
-                                .addComponent(jFormattedTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jFormattedTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(roundPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE))
+                                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jComboBox11, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jFormattedTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(roundPanel2Layout.createSequentialGroup()
+                                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(roundPanel2Layout.createSequentialGroup()
+                                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(roundPanel2Layout.createSequentialGroup()
+                                        .addComponent(jFormattedTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton9)))
+                                .addGap(18, 18, 18)
+                                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jFormattedTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(42, 42, 42))
         );
         roundPanel2Layout.setVerticalGroup(
@@ -371,33 +373,33 @@ public class FuelSupplies extends javax.swing.JPanel {
         String fualType = String.valueOf(jComboBox11.getSelectedItem());
         Double quantity = Double.valueOf(jFormattedTextField5.getText());
         Double price = Double.valueOf(jFormattedTextField6.getText());
-        
-        if("SELECT".equals(company)){
+
+        if ("SELECT".equals(company)) {
             JOptionPane.showMessageDialog(this, "Please Select Comapany", "Warning", JOptionPane.WARNING_MESSAGE);
-        }else if("SELECT".equals(fualType)){
+        } else if ("SELECT".equals(fualType)) {
             JOptionPane.showMessageDialog(this, "Please Select Fual Type", "Warning", JOptionPane.WARNING_MESSAGE);
-        }else if(quantity == 0.0){
+        } else if (quantity == 0.0) {
             JOptionPane.showMessageDialog(this, "Please Enter Quantity", "Warning", JOptionPane.WARNING_MESSAGE);
-        }else if(price == 0.0){
+        } else if (price == 0.0) {
             JOptionPane.showMessageDialog(this, "Please Enter Unit Price", "Warning", JOptionPane.WARNING_MESSAGE);
-        }else{
+        } else {
             int companyId = companyMap.get(company);
             int fualTypeId = fualTypeMap.get(fualType);
-            
+
             LocalDate d = LocalDate.now();
-        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String date = d.format(f);
-            
+            DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String date = d.format(f);
+
             try {
-                MySql.execute("INSERT INTO `fuel_has_suppliers` (`fu_id`,`su_id`,`date`,`qty`,`buying_price`,`total`) VALUES('"+fualTypeId+"','"+companyId+"','"+date+"','"+quantity+"','"+price+"','"+totalCost+"')");
-                MySql.execute("UPDATE `fuel` SET `fu_qty` = `fu_qty` + '"+quantity+"' WHERE `fu_id` = '"+fualTypeId+"'");
+                MySql.execute("INSERT INTO `fuel_has_suppliers` (`fu_id`,`su_id`,`date`,`qty`,`buying_price`,`total`) VALUES('" + fualTypeId + "','" + companyId + "','" + date + "','" + quantity + "','" + price + "','" + totalCost + "')");
+                MySql.execute("UPDATE `fuel` SET `fu_qty` = `fu_qty` + '" + quantity + "' WHERE `fu_id` = '" + fualTypeId + "'");
                 clearImports();
                 loadImports();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        
+
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
