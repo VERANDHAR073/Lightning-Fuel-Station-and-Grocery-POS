@@ -191,14 +191,15 @@ public class AdminLogin extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Please Enter Password", "Warning", JOptionPane.WARNING_MESSAGE);
         }else{
             try {
-                ResultSet resultSet = MySql.execute("SELECT * FROM `employee_login` INNER JOIN `employees` ON `employee_login`.`e_nic`=`employees`.`e_nic` "
-                        + " WHERE `username` = '"+username+"' AND `password` = '"+password+"' AND `et_id`='1'");
+                ResultSet resultSet = MySql.execute("SELECT * FROM `employee_login` INNER JOIN `employees` ON `employee_login`.`e_nic`=`employees`.`e_nic` INNER JOIN `employee_type` ON `employees`.`et_id` = `employee_type`.`et_id`"
+                        + " WHERE `username` = '"+username+"' AND `password` = '"+password+"' AND `employees`.`et_id`='1'");
                 if(resultSet.next()){
                     String name = resultSet.getString("e_fname")+" "+resultSet.getString("e_lname");
                     
                     UserDetails user = new UserDetails();
                     user.setName(name);
                     user.setUsername(username);
+                    user.setUserType(resultSet.getString("et_name"));
                     
                     AdminNavigator an = new AdminNavigator(user);
                     an.setVisible(true);

@@ -7,9 +7,15 @@ import javax.swing.table.DefaultTableModel;
 import com.model.MySql;
 import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 public class ViewSalary extends javax.swing.JPanel {
-    
+
     private static HashMap<String, Integer> dateMap = new HashMap<>();
 
     public ViewSalary() {
@@ -18,7 +24,7 @@ public class ViewSalary extends javax.swing.JPanel {
         setBackground(new Color(0, 0, 0, 0));
         loadMonth();
     }
-    
+
     private void loadMonth() {
         try {
             ResultSet resultSet = MySql.execute("SELECT * FROM `es_month` ORDER BY `m_id` DESC");
@@ -50,7 +56,7 @@ public class ViewSalary extends javax.swing.JPanel {
 
                 while (resultSet.next()) {
                     Vector<String> pv = new Vector<>();
-                    pv.add(resultSet.getString("es_id"));
+                    pv.add(resultSet.getString("e_nic"));
                     pv.add(resultSet.getString("e_fname") + " " + resultSet.getString("e_lname"));
                     pv.add(resultSet.getString("e_contact"));
                     pv.add(resultSet.getString("es_salary"));
@@ -81,6 +87,7 @@ public class ViewSalary extends javax.swing.JPanel {
         jTable3 = new javax.swing.JTable();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel10 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
 
         roundPanel1.setBackground(new java.awt.Color(71, 71, 71));
 
@@ -102,7 +109,7 @@ public class ViewSalary extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Id", "Name", "Contact", "Salary", "Addons", "Total", "Paid Date"
+                "NIC", "Name", "Contact", "Salary", "Addons", "Total", "Paid Date"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -150,6 +157,16 @@ public class ViewSalary extends javax.swing.JPanel {
         jLabel10.setText("Select Month");
         jLabel10.setToolTipText("");
 
+        jButton2.setBackground(new java.awt.Color(51, 51, 51));
+        jButton2.setFont(new java.awt.Font("Quicksand", 1, 12)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
+        jButton2.setText("Genarate Report");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
         roundPanel1Layout.setHorizontalGroup(
@@ -157,17 +174,21 @@ public class ViewSalary extends javax.swing.JPanel {
             .addGroup(roundPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(582, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
+                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(roundPanel1Layout.createSequentialGroup()
                                 .addGap(4, 4, 4)
                                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(20, 20, 20))
+                                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jButton2))))
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE))
+                        .addGap(20, 20, 20))))
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -177,9 +198,11 @@ public class ViewSalary extends javax.swing.JPanel {
                 .addGap(14, 14, 14)
                 .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
         );
 
@@ -211,8 +234,29 @@ public class ViewSalary extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jComboBox1PropertyChange
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        try {
+            String month = String.valueOf(jComboBox1.getSelectedItem());
+            if (month != "SELECT") {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("month", month);
+
+                String reportPath = "src/com/Reports/salaryReport.jasper";
+                JRDataSource dataSource = new JRTableModelDataSource(jTable3.getModel());
+
+                JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, map, dataSource);
+                JasperViewer.viewReport(jasperPrint, false);
+            }else{
+                JOptionPane.showMessageDialog(this, "Please Select a month", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel5;

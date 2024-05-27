@@ -11,6 +11,7 @@ package com.model;
 public class UserDetails {
     private String name;
     private String username;
+    private String userType;
 
     public void setName(String name) {
         this.name = name;
@@ -26,5 +27,13 @@ public class UserDetails {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 }

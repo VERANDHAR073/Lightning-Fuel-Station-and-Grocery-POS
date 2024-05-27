@@ -15,8 +15,10 @@ public class User extends javax.swing.JPanel {
         initComponents();
     }
     
-    public void loadUserDetails(String name){
+    public void loadUserDetails(String name,String type){
         jLabel1.setText(name);
+        jLabel2.setText(type);
+        
     }
 
     /**

@@ -16,7 +16,7 @@ public class FuelStationNavigator extends javax.swing.JFrame {
         initComponents();
         setBackground(new Color(0, 0, 0, 0));
         roundPanel1.setOpaque(true);
-        user.loadUserDetails(userDetails.getName());
+        user.loadUserDetails(userDetails.getName(),userDetails.getUserType());
         showForm(new FuelProductManagement());
         setSelected(buttonMenu4);
     }
