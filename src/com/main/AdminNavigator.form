@@ -245,7 +245,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/icon/2.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="   Releasing And Importings"/>
+                <Property name="text" type="java.lang.String" value="   Releasing "/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Quicksand" size="12" style="0"/>
                 </Property>

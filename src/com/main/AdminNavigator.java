@@ -5,6 +5,7 @@ import com.form.ImportingAndReleasing;
 import com.form.PumperDetails;
 import com.form.Register;
 import com.form.Reports;
+import com.frams.DailyRelease;
 import com.model.UserDetails;
 import com.swing.ButtonMenu;
 import java.awt.Color;
@@ -136,7 +137,7 @@ public class AdminNavigator extends javax.swing.JFrame {
         });
 
         buttonMenu4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/icon/2.png"))); // NOI18N
-        buttonMenu4.setText("   Releasing And Importings");
+        buttonMenu4.setText("   Releasing ");
         buttonMenu4.setFont(new java.awt.Font("Quicksand", 0, 12)); // NOI18N
         buttonMenu4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -254,7 +255,7 @@ public class AdminNavigator extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonMenu2ActionPerformed
 
     private void buttonMenu4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonMenu4ActionPerformed
-        showForm(new ImportingAndReleasing());
+        showForm(new DailyRelease());
         setSelected(buttonMenu4);
     }//GEN-LAST:event_buttonMenu4ActionPerformed
 
