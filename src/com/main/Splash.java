@@ -14,13 +14,13 @@ public class Splash extends javax.swing.JFrame {
         
         Thread t = new Thread(
             ()->{
-                for (int p=0; p<100; p++) {
+                for (int progress=0; progress<100; progress++) {
                     
-                    jProgressBar1.setValue(p);
+                    jProgressBar1.setValue(progress);
                     
                     try {
                         
-                        Thread.sleep(30);
+                        Thread.sleep(8);
                         
                     } catch (Exception e) {
                         e.printStackTrace();

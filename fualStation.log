@@ -16,3 +16,11 @@ May 28, 2024 1:43:48 AM com.form.Home stockQuantity
 WARNING: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
 
 The last packet successfully received from the server was 20,255 milliseconds ago. The last packet sent successfully to the server was 20,333 milliseconds ago.
+Dec 09, 2025 1:59:38 PM com.main.AdminLogin jButton2ActionPerformed
+WARNING: Admin Login Quary Failed
+Dec 09, 2025 1:59:38 PM com.main.AdminLogin jButton2ActionPerformed
+WARNING: java.sql.SQLNonTransientConnectionException: Could not create connection to database server. Attempted reconnect 3 times. Giving up.
+Dec 09, 2025 2:00:45 PM com.main.AdminLogin jButton2ActionPerformed
+WARNING: Admin Login Quary Failed
+Dec 09, 2025 2:00:45 PM com.main.AdminLogin jButton2ActionPerformed
+WARNING: java.sql.SQLNonTransientConnectionException: Could not create connection to database server. Attempted reconnect 3 times. Giving up.
